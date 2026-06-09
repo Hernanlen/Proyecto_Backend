@@ -66,6 +66,7 @@ export const Productos = () => {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+  const [categoriaError, setCategoriaError] = useState("");
   
   // 🌟 NUEVO: Estado para saber qué filtro presionó el usuario
   const [categoriaActiva, setCategoriaActiva] = useState<number | 'todas'>('todas');
@@ -79,6 +80,7 @@ export const Productos = () => {
     try {
       setCargando(true);
       setError("");
+      setCategoriaError("");
       
       // 1. Cargamos productos
       const resProductos = await api.get<BackendProducto[]>("/productos");
@@ -89,13 +91,8 @@ export const Productos = () => {
         const resCategorias = await api.get<Categoria[]>("/categorias");
         setCategorias(resCategorias.data);
       } catch (catErr) {
-        // Fallback temporal con las familias que creamos en tu base de datos SQL
-        setCategorias([
-          { id: 1, nombre: "Ollas y Cacerolas" },
-          { id: 2, nombre: "Sartenes y Woks" },
-          { id: 3, nombre: "Biferas y Planchas" },
-          { id: 4, nombre: "Utensilios y Accesorios" }
-        ]);
+        setCategorias([]);
+        setCategoriaError("No se pudieron cargar las categorías. No será posible crear ni editar productos hasta que el servidor las entregue.");
       }
 
     } catch (err) {
@@ -117,7 +114,7 @@ export const Productos = () => {
         ...data,
         precio: Number(data.precio),
         stock: Number(data.stock),
-        categoriaId: Number(data.categoriaId) // Aseguramos que se envíe el ID numérico
+        categoriaId: data.categoriaId ? Number(data.categoriaId) : undefined,
       };
 
       if (editandoId) {
@@ -256,6 +253,7 @@ export const Productos = () => {
       {/* --- ESTADOS --- */}
       {cargando && <p className="productos-estado">Cargando catálogo...</p>}
       {!cargando && error && <p className="productos-error">{error}</p>}
+      {!cargando && categoriaError && <p className="productos-error">{categoriaError}</p>}
       
       {/* --- GRILLA DE PRODUCTOS FILTRADOS --- */}
       {!cargando && !error && productosFiltrados.length === 0 && (

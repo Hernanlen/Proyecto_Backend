@@ -16,9 +16,10 @@ export class ProductosService {
   async create(createProductoDto: CreateProductoDto) {
     const nuevoProducto = this.productoRepository.create({
       ...createProductoDto,
-      categoria: createProductoDto.categoriaId
-        ? ({ id: createProductoDto.categoriaId } as any)
-        : undefined,
+      categoria:
+        createProductoDto.categoriaId && createProductoDto.categoriaId > 0
+          ? ({ id: createProductoDto.categoriaId } as any)
+          : undefined,
     });
 
     return await this.productoRepository.save(nuevoProducto);
@@ -49,7 +50,10 @@ export class ProductosService {
     const productoExistente = await this.findOne(id); // Verificamos que exista primero
 
     if (updateProductoDto.categoriaId !== undefined) {
-      productoExistente.categoria = { id: updateProductoDto.categoriaId } as any;
+      productoExistente.categoria =
+        updateProductoDto.categoriaId && updateProductoDto.categoriaId > 0
+          ? ({ id: updateProductoDto.categoriaId } as any)
+          : undefined;
     }
 
     Object.assign(productoExistente, updateProductoDto);

@@ -1,4 +1,4 @@
-import { Controller, Get, Put,Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Put, Post, Body, Param, Delete, UseGuards } from '@nestjs/common';
 import { ProductosService } from './productos.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto'; // 🌟 NUEVO: Importamos el DTO de actualización
@@ -33,10 +33,14 @@ export class ProductosController {
     return this.productosService.remove(+id);
   }
 
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.productosService.findOne(+id);
+  }
+
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
-  @Patch(':id')
-  @Put(':id') 
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
     return this.productosService.update(+id, updateProductoDto);
   }

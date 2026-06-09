@@ -20,9 +20,9 @@ export class Producto {
   stock: number = 0;
 
   // ELIMINAMOS categoriaId: number = 0; Y AGREGAMOS ESTO:
-  @ManyToOne(() => Categoria, (categoria) => categoria.productos)
+  @ManyToOne(() => Categoria, (categoria) => categoria.productos, { nullable: true })
   @JoinColumn({ name: 'categoria_id' }) // Vincula con la columna real de MySQL
-  categoria: Categoria;
+  categoria?: Categoria;
 
   @Column({ length: 50, nullable: true })
   diametro: string = '';
