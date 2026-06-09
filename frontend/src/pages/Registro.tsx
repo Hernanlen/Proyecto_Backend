@@ -66,142 +66,91 @@ export const Registro = () => {
   });
 
   return (
-    <div className="registro-container">
-      <div className="registro-card">
-        <div className="registro-header">
-          <div className="logo-icon">🍳</div>
-          <h2>Crear Cuenta</h2>
-          <p>Únete a la comunidad ESSEN Premium</p>
+    <div className="login-container">
+      <form className="login-card" onSubmit={handleSubmit(onSubmit)}>
+        <h2>Crear Cuenta</h2>
+
+        {/* NOMBRE */}
+        <input
+          {...register("nombre", { required: "El nombre es obligatorio" })}
+          type="text"
+          placeholder="Nombre"
+        />
+        {errors.nombre && <span className="error">{errors.nombre.message}</span>}
+
+        {/* APELLIDO */}
+        <input
+          {...register("apellido", { required: "El apellido es obligatorio" })}
+          type="text"
+          placeholder="Apellido"
+          style={{ marginTop: "10px" }}
+        />
+        {errors.apellido && <span className="error">{errors.apellido.message}</span>}
+
+        {/* EMAIL */}
+        <input
+          {...register("email", {
+            required: "El correo es obligatorio",
+            pattern: { value: /^\S+@\S+$/i, message: "Correo inválido" }
+          })}
+          type="email"
+          placeholder="Correo electrónico"
+          style={{ marginTop: "10px" }}
+        />
+        {errors.email && <span className="error">{errors.email.message}</span>}
+
+        {/* PASSWORD */}
+        <input
+          {...passwordRegister}
+          type="password"
+          placeholder="Crea una contraseña"
+          style={{ marginTop: "10px" }}
+          onChange={(e) => {
+            passwordRegister.onChange(e);
+            evaluarPassword(e);
+          }}
+        />
+        <span style={{ color: colores[fuerzaPass], fontSize: "12px", display: "block", margin: "4px 0" }}>
+          Seguridad: {niveles[fuerzaPass]}
+        </span>
+        {errors.password && <span className="error">{errors.password.message}</span>}
+
+        {/* CONFIRMAR PASSWORD */}
+        <input
+          {...register("confirmPassword", {
+            required: "Debes confirmar tu contraseña",
+            validate: (val: string) => {
+              if (watch('password') !== val) {
+                return "Las contraseñas no coinciden";
+              }
+            },
+          })}
+          type="password"
+          placeholder="Repite tu contraseña"
+          style={{ marginTop: "5px" }}
+        />
+        {errors.confirmPassword && <span className="error">{errors.confirmPassword.message}</span>}
+
+        {/* CAPTCHA */}
+        <div className="captcha" style={{ margin: "15px 0" }}>
+          <ReCAPTCHA
+            sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+            onChange={() => setCaptchaValido(true)}
+          />
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {/* NOMBRE */}
-          <div className="input-group">
-            <label>Nombre completo</label>
-            <input
-              {...register("nombre", { required: "El nombre es obligatorio" })}
-              type="text"
-              placeholder="Tu nombre"
-              className={errors.nombre ? "error-input" : ""}
-            />
-            {errors.nombre && <span className="error-message">{errors.nombre.message}</span>}
-          </div>
+        <button type="submit" disabled={!captchaValido || cargando}>
+          {cargando ? "Registrando..." : "Crear mi cuenta"}
+        </button>
 
-          {/* APELLIDO */}
-          <div className="input-group">
-            <label>Apellido</label>
-            <input
-              {...register("apellido", { required: "El apellido es obligatorio" })}
-              type="text"
-              placeholder="Tu apellido"
-              className={errors.apellido ? "error-input" : ""}
-            />
-            {errors.apellido && <span className="error-message">{errors.apellido.message}</span>}
-          </div>
+        <p style={{ marginTop: "15px", textAlign: "center", fontSize: "14px" }}>
+          ¿Ya tienes cuenta? <span onClick={() => navigate('/login')} style={{ color: "#3b82f6", cursor: "pointer", textDecoration: "underline" }}>Inicia sesión aquí</span>
+        </p>
 
-          {/* EMAIL */}
-          <div className="input-group">
-            <label>Correo electrónico</label>
-            <input
-              {...register("email", {
-                required: "El correo es obligatorio",
-                pattern: { value: /^\S+@\S+$/i, message: "Correo inválido" }
-              })}
-              type="email"
-              placeholder="tu@email.com"
-              className={errors.email ? "error-input" : ""}
-            />
-            {errors.email && <span className="error-message">{errors.email.message}</span>}
-          </div>
-
-          {/* PASSWORD */}
-          <div className="input-group">
-            <label>Contraseña</label>
-            <input
-              {...passwordRegister}
-              type="password"
-              placeholder="Crea una contraseña segura"
-              className={errors.password ? "error-input" : ""}
-              onChange={(e) => {
-                passwordRegister.onChange(e);
-                evaluarPassword(e);
-              }}
-            />
-            {watch('password') && watch('password').length > 0 && (
-              <div className="password-strength">
-                <div className="strength-bar-container">
-                  <div 
-                    className="strength-bar" 
-                    style={{ 
-                      width: `${(fuerzaPass + 1) * 20}%`, 
-                      backgroundColor: colores[fuerzaPass],
-                      transition: 'width 0.3s ease'
-                    }}
-                  />
-                </div>
-                <span className="strength-text" style={{ color: colores[fuerzaPass] }}>
-                  🔒 {niveles[fuerzaPass]}
-                </span>
-              </div>
-            )}
-            {errors.password && <span className="error-message">{errors.password.message}</span>}
-          </div>
-
-          {/* CONFIRMAR PASSWORD */}
-          <div className="input-group">
-            <label>Confirmar contraseña</label>
-            <input
-              {...register("confirmPassword", {
-                required: "Debes confirmar tu contraseña",
-                validate: (val: string) => {
-                  if (watch('password') !== val) {
-                    return "Las contraseñas no coinciden";
-                  }
-                },
-              })}
-              type="password"
-              placeholder="Repite tu contraseña"
-              className={errors.confirmPassword ? "error-input" : ""}
-            />
-            {errors.confirmPassword && <span className="error-message">{errors.confirmPassword.message}</span>}
-          </div>
-
-          {/* CAPTCHA */}
-          <div className="captcha-container">
-            <ReCAPTCHA
-              sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-              onChange={() => setCaptchaValido(true)}
-            />
-          </div>
-
-          {/* BOTÓN DE REGISTRO */}
-          <button 
-            type="submit" 
-            disabled={!captchaValido || cargando}
-            className="btn-registro"
-          >
-            {cargando ? (
-              <span className="loading-spinner">⌛</span>
-            ) : (
-              <span>✨</span>
-            )}
-            {cargando ? "Registrando..." : "Crear mi cuenta"}
-          </button>
-
-          {/* ENLACES ADICIONALES */}
-          <div className="registro-footer">
-            <p>
-              ¿Ya tienes cuenta? 
-              <span onClick={() => navigate('/login')} className="link-login">
-                Inicia sesión aquí
-              </span>
-            </p>
-            <p onClick={() => navigate('/')} className="link-back">
-              ← Volver a la tienda
-            </p>
-          </div>
-        </form>
-      </div>
+        <p onClick={() => navigate('/')} style={{ cursor: "pointer", marginTop: "10px", textAlign: "center", color: "#64748b" }}>
+          ← Volver a la tienda
+        </p>
+      </form>
     </div>
   );
 };
