@@ -1,8 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
+import { IsBoolean, IsOptional } from 'class-validator';
 import { CreateUsuarioDto } from './create-usuario.dto';
 
 export class UpdateUsuarioDto extends PartialType(CreateUsuarioDto) {
-  // Añade estas dos líneas para que el backend las acepte al actualizar
+  @IsOptional()
+  @IsBoolean()
   estado?: boolean;
+
+  @IsOptional()
   password?: string;
 }

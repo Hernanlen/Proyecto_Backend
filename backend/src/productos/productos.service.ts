@@ -46,16 +46,16 @@ export class ProductosService {
 
   // 4. ACTUALIZAR PRODUCTO
   async update(id: number, updateProductoDto: UpdateProductoDto) {
-    await this.findOne(id); // Verificamos que exista primero
+    const productoExistente = await this.findOne(id); // Verificamos que exista primero
 
-    const payload: any = { ...updateProductoDto };
     if (updateProductoDto.categoriaId !== undefined) {
-      payload.categoria = { id: updateProductoDto.categoriaId };
-      delete payload.categoriaId;
+      productoExistente.categoria = { id: updateProductoDto.categoriaId } as any;
     }
 
-    await this.productoRepository.update(id, payload);
-    return this.findOne(id);
+    Object.assign(productoExistente, updateProductoDto);
+    delete (productoExistente as any).categoriaId;
+
+    return await this.productoRepository.save(productoExistente);
   }
 
   // 5. ELIMINAR PRODUCTO (Borrado físico)
