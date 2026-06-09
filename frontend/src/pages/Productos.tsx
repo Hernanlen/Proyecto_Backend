@@ -132,8 +132,14 @@ export const Productos = () => {
       setEditandoId(null);
       reset();
       cargarDatos();
-    } catch (error) {
-      alert("Hubo un error al guardar el producto.");
+    } catch (error: any) {
+      console.error("Error completo:", error);
+      if (error.response && error.response.data) {
+        const mensajeBackend = error.response.data.message || error.response.data;
+        alert(`El servidor rechazó los datos: ${JSON.stringify(mensajeBackend)}`);
+      } else {
+        alert("Hubo un error al guardar el producto.");
+      }
     }
   };
 

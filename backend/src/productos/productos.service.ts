@@ -22,7 +22,7 @@ export class ProductosService {
       relations: { categoria: true }, // Le decimos que traiga los datos de la categoría anidada
     });
   }
-
+  
   findOne(id: number) {
     return `This action returns a #${id} producto`;
   }
