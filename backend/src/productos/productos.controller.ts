@@ -35,6 +35,7 @@ export class ProductosController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
+  @Patch(':id')
   @Put(':id') 
   update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
     return this.productosService.update(+id, updateProductoDto);

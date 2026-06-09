@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Creamos la instancia base apuntando a nuestro backend
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: process.env.API_URL || 'https://tienda-backend-q62q.onrender.com',
   headers: {
     'Content-Type': 'application/json',
   },

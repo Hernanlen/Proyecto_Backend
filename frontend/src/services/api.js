@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // 1. Creamos la conexión base apuntando a tu backend de NestJS
 const api = axios.create({
-  baseURL: 'https://tienda-backend-q62q.onrender.com', // El puerto donde corre tu backend
+  baseURL: import.meta.env.VITE_API_URL || 'https://tienda-backend-q62q.onrender.com',
   headers: {
     'Content-Type': 'application/json',
   },

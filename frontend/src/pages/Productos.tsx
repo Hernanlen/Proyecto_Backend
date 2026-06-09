@@ -41,7 +41,7 @@ type Categoria = {
 
 // --- CONFIGURACIÓN DE IMÁGENES ---
 const imagenFallback = "/favicon.svg";
-const apiBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const apiBaseUrl = "https://tienda-backend-q62q.onrender.com";
 
 const resolverImagen = (imagenUrl?: string | null) => {
   if (!imagenUrl) return imagenFallback;
@@ -163,7 +163,7 @@ export const Productos = () => {
     if (!window.confirm("¿Seguro de eliminar este producto?")) return;
     try {
       await api.delete(`/productos/${id}`);
-      setProductos(productos.filter((p) => p.id !== id));
+      await cargarDatos();
     } catch (error) {
       alert("No se pudo eliminar el producto. Podría estar en un pedido activo.");
     }

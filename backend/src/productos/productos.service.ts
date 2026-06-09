@@ -14,7 +14,13 @@ export class ProductosService {
 
   // 1. CREAR PRODUCTO (Guarda en la BD)
   async create(createProductoDto: CreateProductoDto) {
-    const nuevoProducto = this.productoRepository.create(createProductoDto);
+    const nuevoProducto = this.productoRepository.create({
+      ...createProductoDto,
+      categoria: createProductoDto.categoriaId
+        ? ({ id: createProductoDto.categoriaId } as any)
+        : undefined,
+    });
+
     return await this.productoRepository.save(nuevoProducto);
   }
 
@@ -40,12 +46,15 @@ export class ProductosService {
 
   // 4. ACTUALIZAR PRODUCTO
   async update(id: number, updateProductoDto: UpdateProductoDto) {
-    const productoExistente = await this.findOne(id); // Verificamos que exista primero
-    
-    // TypeORM actualizará solo los campos que vengan en el DTO
-    await this.productoRepository.update(id, updateProductoDto);
-    
-    // Retornamos el producto ya actualizado
+    await this.findOne(id); // Verificamos que exista primero
+
+    const payload: any = { ...updateProductoDto };
+    if (updateProductoDto.categoriaId !== undefined) {
+      payload.categoria = { id: updateProductoDto.categoriaId };
+      delete payload.categoriaId;
+    }
+
+    await this.productoRepository.update(id, payload);
     return this.findOne(id);
   }
 

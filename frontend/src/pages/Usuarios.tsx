@@ -114,10 +114,11 @@ export const Usuarios = () => {
 
   const toggleEstado = async (id: number, estadoActual: boolean) => {
     try {
-      // await api.patch(`/usuarios/${id}`, { estado: !estadoActual });
+      await api.patch(`/usuarios/${id}`, { estado: !estadoActual });
       setUsuarios(usuarios.map(u => u.id === id ? { ...u, estado: !estadoActual } : u ));
-    } catch (error) {
-      alert('Error al cambiar el estado del usuario');
+    } catch (error: any) {
+      const mensajeBackend = error.response?.data?.message || 'Error al cambiar el estado del usuario';
+      alert(mensajeBackend);
     }
   };
 
