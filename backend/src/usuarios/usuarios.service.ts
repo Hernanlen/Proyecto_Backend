@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
+import { Pedido } from '../pedidos/entities/pedido.entity';
+import { Carrito } from '../carrito/entities/carrito.entity';
 import * as bcrypt from 'bcrypt'; 
 import { LogsService } from '../logs/logs.service'; // 🌟 Importamos el servicio de auditoría
 
@@ -12,6 +14,10 @@ export class UsuariosService {
   constructor(
     @InjectRepository(Usuario)
     private usuarioRepository: Repository<Usuario>,
+    @InjectRepository(Pedido)
+    private pedidoRepository: Repository<Pedido>,
+    @InjectRepository(Carrito)
+    private carritoRepository: Repository<Carrito>,
     private readonly logsService: LogsService, // 🌟 Inyectamos el servicio
   ) {}
   
@@ -70,14 +76,38 @@ export class UsuariosService {
 
   async remove(id: number, adminId: number = 1) {
     const usuarioAEliminar = await this.findOne(id); // Verificamos que exista primero
+
+    const pedidosAsociados = await this.pedidoRepository.count({
+      where: { usuario: { id } },
+    });
+
+    const carritoAsociado = await this.carritoRepository.count({
+      where: { usuario: { id } },
+    });
+
+    if (pedidosAsociados > 0 || carritoAsociado > 0) {
+      usuarioAEliminar.estado = false;
+      await this.usuarioRepository.save(usuarioAEliminar);
+
+      await this.logsService.registrarUsuario(
+        adminId,
+        `Usuario ID ${id} tenía dependencias y fue desactivado en lugar de eliminado`,
+        'usuarios',
+        id,
+      );
+
+      return {
+        message: `El usuario tenía ${pedidosAsociados} pedidos y ${carritoAsociado} items en carrito. Fue desactivado en lugar de eliminado.`,
+      };
+    }
+
     await this.usuarioRepository.delete(id);
 
-    // 🌟 Disparador de Log
     await this.logsService.registrarUsuario(
-      adminId, 
-      `Eliminación física del usuario: ${usuarioAEliminar.email}`, 
-      'usuarios', 
-      id
+      adminId,
+      `Eliminación física del usuario: ${usuarioAEliminar.email}`,
+      'usuarios',
+      id,
     );
 
     return { message: `Usuario #${id} eliminado correctamente` };

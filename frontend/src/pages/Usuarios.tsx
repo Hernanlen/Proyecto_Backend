@@ -104,11 +104,12 @@ export const Usuarios = () => {
       return;
     }
     try {
-      await api.delete(`/usuarios/${id}`);
+      const response = await api.delete(`/usuarios/${id}`);
       setUsuarios(usuarios.filter(u => u.id !== id));
-      alert('Usuario eliminado permanentemente');
-    } catch (error) {
-      alert('Error al eliminar. Es posible que este usuario tenga pedidos vinculados y PostgreSQL bloquee el borrado por seguridad.');
+      alert(response.data?.message || 'Usuario eliminado correctamente');
+    } catch (error: any) {
+      const mensaje = error.response?.data?.message || 'Error al eliminar. Es posible que este usuario tenga pedidos vinculados y PostgreSQL bloquee el borrado por seguridad.';
+      alert(mensaje);
     }
   };
 
