@@ -54,13 +54,20 @@ export const Usuarios = () => {
   // 🌟 CORREGIDO: Usamos la interfaz correcta de Usuarios
   const onSubmitForm: SubmitHandler<UsuarioFormInputs> = async (data) => {
     try {
-      const payload = { ...data };
+      // 🌟 1. ARMAMOS EL PAQUETE SOLO CON LOS CAMPOS ESTRICTAMENTE NECESARIOS
+      const payload: any = {
+        nombre: data.nombre,
+        apellido: data.apellido,
+        email: data.email,
+        rol: data.rol
+      };
 
-      // EL TRUCO SALVAVIDAS: Si la contraseña está vacía, la borramos del paquete
-      if (!payload.password || payload.password.trim() === "") {
-        delete payload.password;
+      // 🌟 2. SOLO AGREGAMOS LA CONTRASEÑA SI SE ESCRIBIÓ ALGO
+      if (data.password && data.password.trim() !== "") {
+        payload.password = data.password;
       }
 
+      // 3. ENVIAMOS LA PETICIÓN
       if (editandoId) {
         await api.patch(`/usuarios/${editandoId}`, payload);
         alert("Usuario actualizado con éxito");
@@ -69,17 +76,13 @@ export const Usuarios = () => {
         alert("Usuario creado exitosamente");
       }
 
-      // 🌟 CORREGIDO: Usamos las funciones que existen en este archivo
       cerrarModal();
       cargarUsuarios();
 
     } catch (error: any) {
       console.error("Error completo:", error);
-      
-      // 🌟 AQUÍ ESTÁ LA MAGIA: Extraemos el mensaje exacto de NestJS
       if (error.response && error.response.data) {
         const mensajeBackend = error.response.data.message || error.response.data;
-        console.error("El backend se queja de:", mensajeBackend);
         alert(`El servidor rechazó los datos: ${JSON.stringify(mensajeBackend)}`);
       } else {
         alert("Hubo un error de conexión al guardar el usuario.");
