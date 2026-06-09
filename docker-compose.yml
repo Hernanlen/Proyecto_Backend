@@ -1,47 +1,39 @@
 version: '3.8'
 
 services:
-  # 1. Base de Datos MySQL
-  db:
-    image: mysql:8.0
-    container_name: tienda_mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root  # Pon aquí la clave que usas en tu .env
-      MYSQL_DATABASE: essen_ecommerce # El nombre exacto de tu base de datos
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-
-  # 2. Tu Backend en NestJS
+  # --- SERVICIO DEL BACKEND (NestJS) ---
   backend:
-    build: 
-      context: ./backend
-    container_name: tienda_backend
-    restart: always
+    build:
+      context: ./backend # Ruta a la carpeta de tu backend
+      dockerfile: Dockerfile
     ports:
-      - "3000:3000"
-    depends_on:
-      - db
+      - "3000:3000" # Mapea el puerto 3000 de tu computadora al contenedor
     environment:
-      - DB_HOST=db # Docker entiende que "db" es el contenedor de arriba
-      - DB_PORT=3306
-      - DB_USERNAME=root
-      - DB_PASSWORD=root
-      - DB_DATABASE=essen_ecommerce
-      - JWT_SECRET=mi_super_secreto_para_la_tienda_essen_2026
+      - NODE_ENV=development
+      # Aquí puedes poner tus variables de entorno locales de la base de datos
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - essen-network
 
-  # 3. Tu Frontend en React
+  # --- SERVICIO DEL FRONTEND (React + Vite) ---
   frontend:
     build:
-      context: ./frontend
-    container_name: tienda_frontend
-    restart: always
+      context: ./frontend # Ruta a la carpeta de tu frontend
+      dockerfile: Dockerfile
     ports:
-      - "80:80" # Tu app estará disponible en http://localhost
+      - "5173:5173" # Puerto por defecto de Vite (o cambia al que uses)
+    environment:
+      - VITE_API_URL=http://localhost:3000 # Apunta al backend de Docker
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - essen-network
     depends_on:
-      - backend
+      - backend # Le dice a Docker que levante primero el backend
 
-volumes:
-  db_data: # Esto evita que se borren tus datos si apagas Docker
+networks:
+  essen-network:
+    driver: bridge
