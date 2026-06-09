@@ -25,14 +25,21 @@ export class ProductosService {
       });
 
       if (!categoriaEncontrada) {
-        throw new NotFoundException(`Categoría con ID ${createProductoDto.categoriaId} no encontrada`);
+        categoria = undefined;
+      } else {
+        categoria = categoriaEncontrada;
       }
-
-      categoria = categoriaEncontrada;
     }
 
     const nuevoProducto = this.productoRepository.create({
-      ...createProductoDto,
+      nombre: createProductoDto.nombre,
+      descripcion: createProductoDto.descripcion,
+      precio: createProductoDto.precio,
+      stock: createProductoDto.stock,
+      diametro: createProductoDto.diametro,
+      capacidad: createProductoDto.capacidad,
+      material: createProductoDto.material,
+      imagenUrl: createProductoDto.imagenUrl,
       categoria,
     });
 
@@ -70,16 +77,24 @@ export class ProductosService {
         });
 
         if (!categoria) {
-          throw new NotFoundException(`Categoría con ID ${updateProductoDto.categoriaId} no encontrada`);
+          productoExistente.categoria = undefined;
+        } else {
+          productoExistente.categoria = categoria;
         }
-
-        productoExistente.categoria = categoria;
       } else {
         productoExistente.categoria = undefined;
       }
     }
 
-    Object.assign(productoExistente, updateProductoDto);
+    productoExistente.nombre = updateProductoDto.nombre ?? productoExistente.nombre;
+    productoExistente.descripcion = updateProductoDto.descripcion ?? productoExistente.descripcion;
+    productoExistente.precio = updateProductoDto.precio ?? productoExistente.precio;
+    productoExistente.stock = updateProductoDto.stock ?? productoExistente.stock;
+    productoExistente.diametro = updateProductoDto.diametro ?? productoExistente.diametro;
+    productoExistente.capacidad = updateProductoDto.capacidad ?? productoExistente.capacidad;
+    productoExistente.material = updateProductoDto.material ?? productoExistente.material;
+    productoExistente.imagenUrl = updateProductoDto.imagenUrl ?? productoExistente.imagenUrl;
+
     delete (productoExistente as any).categoriaId;
 
     return await this.productoRepository.save(productoExistente);

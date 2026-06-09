@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsString, IsNumber, IsPositive, IsOptional, MinLength } from 'class-validator';
 
 export class CreateProductoDto {
@@ -8,10 +9,12 @@ export class CreateProductoDto {
   @IsString()
   descripcion: string='';
 
+  @Type(() => Number)
   @IsNumber({}, { message: 'El precio debe ser un número' })
   @IsPositive({ message: 'El precio debe ser mayor a 0' })
   precio: number=0;
 
+  @Type(() => Number)
   @IsNumber()
   stock: number=0;
 
@@ -32,6 +35,7 @@ export class CreateProductoDto {
   imagenUrl?: string;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   categoriaId?: number;
 }

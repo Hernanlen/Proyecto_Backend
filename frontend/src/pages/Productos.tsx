@@ -31,7 +31,7 @@ type FormProducto = {
   precio: number;
   stock: number;
   imagenUrl: string;
-  categoriaId?: number;
+  categoriaId?: number | string;
 };
 
 type Categoria = {
@@ -200,7 +200,7 @@ export const Productos = () => {
                 <input type="number" {...register("stock", { required: true })} placeholder="Stock" style={{ flex: "1 1 100px", padding: "8px" }} />
                 
                 {/* 🌟 AHORA EL ADMIN PUEDE ELEGIR LA CATEGORÍA AL CREAR */}
-                <select {...register("categoriaId", { required: true })} style={{ flex: "1 1 150px", padding: "8px" }}>
+                <select {...register("categoriaId")} style={{ flex: "1 1 150px", padding: "8px" }}>
                   <option value="">Selecciona Categoría...</option>
                   {categorias.map(c => (
                     <option key={c.id} value={c.id}>{c.nombre}</option>
