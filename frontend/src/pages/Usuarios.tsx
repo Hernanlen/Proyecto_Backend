@@ -154,7 +154,7 @@ export const Usuarios = () => {
           onClick={() => { cerrarModal(); setIsModalOpen(true); }}
           style={{ background: '#3b82f6', color: 'white', padding: '10px 20px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
         >
-          + Agregar Usuario
+          + Agregar Usuario1
         </button>
       </div>
 
