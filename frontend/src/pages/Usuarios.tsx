@@ -73,9 +73,17 @@ export const Usuarios = () => {
       cerrarModal();
       cargarUsuarios();
 
-    } catch (error) {
-      console.error("Error al guardar:", error);
-      alert("Hubo un error al guardar el usuario.");
+    } catch (error: any) {
+      console.error("Error completo:", error);
+      
+      // 🌟 AQUÍ ESTÁ LA MAGIA: Extraemos el mensaje exacto de NestJS
+      if (error.response && error.response.data) {
+        const mensajeBackend = error.response.data.message || error.response.data;
+        console.error("El backend se queja de:", mensajeBackend);
+        alert(`El servidor rechazó los datos: ${JSON.stringify(mensajeBackend)}`);
+      } else {
+        alert("Hubo un error de conexión al guardar el usuario.");
+      }
     }
   };
 
