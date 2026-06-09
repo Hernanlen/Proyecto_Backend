@@ -121,7 +121,7 @@ export const Productos = () => {
       };
 
       if (editandoId) {
-        await api.patch(`/productos/${editandoId}`, payload);
+        await api.put(`/productos/${editandoId}`, payload);
         alert("Producto actualizado");
       } else {
         await api.post("/productos", payload);

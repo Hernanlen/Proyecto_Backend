@@ -1,37 +1,58 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
-import { Producto } from './entities/producto.entity'; // Importamos tu entidad
+import { Producto } from './entities/producto.entity';
+
 @Injectable()
 export class ProductosService {
-  // Inyectamos el repositorio para poder hablar con la tabla de MySQL
   constructor(
     @InjectRepository(Producto)
     private productoRepository: Repository<Producto>,
   ) {}
 
-  create(createProductoDto: CreateProductoDto) {
-    return 'This action adds a new producto';
+  // 1. CREAR PRODUCTO (Guarda en la BD)
+  async create(createProductoDto: CreateProductoDto) {
+    const nuevoProducto = this.productoRepository.create(createProductoDto);
+    return await this.productoRepository.save(nuevoProducto);
   }
 
-  // REEMPLAZAMOS EL TEXTO DE RELLENO POR LA CONSULTA A LA BASE DE DATOS
+  // 2. OBTENER TODOS (Esta ya la tenías perfecta)
   async findAll() {
     return await this.productoRepository.find({
-      relations: { categoria: true }, // Le decimos que traiga los datos de la categoría anidada
+      relations: { categoria: true },
     });
   }
-  
-  findOne(id: number) {
-    return `This action returns a #${id} producto`;
+
+  // 3. OBTENER UNO SOLO
+  async findOne(id: number) {
+    const producto = await this.productoRepository.findOne({
+      where: { id },
+      relations: { categoria: true },
+    });
+    
+    if (!producto) {
+      throw new NotFoundException(`Producto con ID ${id} no encontrado`);
+    }
+    return producto;
   }
 
-  update(id: number, updateProductoDto: UpdateProductoDto) {
-    return `This action updates a #${id} producto`;
+  // 4. ACTUALIZAR PRODUCTO
+  async update(id: number, updateProductoDto: UpdateProductoDto) {
+    const productoExistente = await this.findOne(id); // Verificamos que exista primero
+    
+    // TypeORM actualizará solo los campos que vengan en el DTO
+    await this.productoRepository.update(id, updateProductoDto);
+    
+    // Retornamos el producto ya actualizado
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} producto`;
+  // 5. ELIMINAR PRODUCTO (Borrado físico)
+  async remove(id: number) {
+    const producto = await this.findOne(id); // Verificamos que exista
+    await this.productoRepository.remove(producto); // Lo eliminamos de verdad
+    return { message: `Producto eliminado exitosamente` };
   }
 }
