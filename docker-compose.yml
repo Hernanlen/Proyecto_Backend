@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # 1. Base de Datos MySQL
+  db:
+    image: mysql:8.0
+    container_name: tienda_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root  # Pon aquí la clave que usas en tu .env
+      MYSQL_DATABASE: essen_ecommerce # El nombre exacto de tu base de datos
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # 2. Tu Backend en NestJS
+  backend:
+    build: 
+      context: ./backend
+    container_name: tienda_backend
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db # Docker entiende que "db" es el contenedor de arriba
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - DB_DATABASE=essen_ecommerce
+      - JWT_SECRET=mi_super_secreto_para_la_tienda_essen_2026
+
+  # 3. Tu Frontend en React
+  frontend:
+    build:
+      context: ./frontend
+    container_name: tienda_frontend
+    restart: always
+    ports:
+      - "80:80" # Tu app estará disponible en http://localhost
+    depends_on:
+      - backend
+
+volumes:
+  db_data: # Esto evita que se borren tus datos si apagas Docker

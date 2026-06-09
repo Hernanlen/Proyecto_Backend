@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  accion VARCHAR(80) NOT NULL,
+  modulo VARCHAR(120) NOT NULL,
+  descripcion TEXT NULL,
+  usuario_id INT NULL,
+  usuario_email VARCHAR(150) NULL,
+  ip VARCHAR(45) NULL,
+  user_agent TEXT NULL,
+  fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

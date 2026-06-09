@@ -1,0 +1,52 @@
+/* 🔥 CONTENEDOR GENERAL */
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* 🔥 CONTENIDO PRINCIPAL */
+.layout-main {
+  flex: 1;
+  padding: 30px;
+  background-color: #f1f5f9;
+  min-height: 100vh;
+  transition: all 0.3s ease;
+}
+
+/* 🔥 EFECTO SUAVE */
+.layout-main:hover {
+  background-color: #eef2f7;
+}
+
+/* 🔥 SCROLL BONITO */
+.layout-main {
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* Chrome scrollbar */
+.layout-main::-webkit-scrollbar {
+  width: 8px;
+}
+
+.layout-main::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.layout-main::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* 🔥 RESPONSIVE */
+@media (max-width: 768px) {
+  .layout-container {
+    flex-direction: column;
+  }
+
+  .layout-main {
+    padding: 20px;
+  }
+}

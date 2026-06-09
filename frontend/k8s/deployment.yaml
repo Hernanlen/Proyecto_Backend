@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: his-frontend-deployment
+  labels:
+    app: his-frontend
+spec:
+  replicas: 2 # Kubernetes mantendrá 2 instancias siempre activas
+  selector:
+    matchLabels:
+      app: his-frontend
+  template:
+    metadata:
+      labels:
+        app: his-frontend
+    spec:
+      containers:
+      - name: his-frontend
+        image: tu-usuario-github/his-frontend:latest # Aquí irá el nombre de tu imagen en DockerHub
+        ports:
+        - containerPort: 80
