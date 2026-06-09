@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Put,Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ProductosService } from './productos.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto'; // 🌟 NUEVO: Importamos el DTO de actualización
@@ -24,13 +24,6 @@ export class ProductosController {
     return this.productosService.create(createProductoDto);
   }
 
-  // 🌟 NUEVO: SOLO LOS ADMINS PUEDEN EDITAR PRODUCTOS
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin')
-  @Patch(':id') // Aquí definimos que acepte peticiones PATCH como las de tu React
-  update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
-    return this.productosService.update(+id, updateProductoDto); // El "+" convierte el string a número
-  }
 
   // SOLO LOS ADMINS PUEDEN ELIMINAR PRODUCTOS
   @UseGuards(AuthGuard, RolesGuard)
@@ -38,5 +31,12 @@ export class ProductosController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productosService.remove(+id);
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
+  @Put(':id') 
+  update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
+    return this.productosService.update(+id, updateProductoDto);
   }
 }
