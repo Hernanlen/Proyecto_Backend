@@ -1,212 +1,48 @@
-/* Estilos específicos para Registro */
-.registro-container {
-  min-height: calc(100vh - 200px);
+.login-container {
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
-  background: linear-gradient(135deg, #fff9f5 0%, #fff0e6 100%);
+  background: #f5f5f5;
 }
 
-.registro-card {
-  max-width: 500px;
-  width: 100%;
+.login-card {
   background: white;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(139, 90, 43, 0.15);
-  padding: 2rem;
-  transition: transform 0.3s ease;
-}
-
-.registro-card:hover {
-  transform: translateY(-5px);
-}
-
-.registro-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.registro-header .logo-icon {
-  font-size: 3rem;
-  display: inline-block;
-  margin-bottom: 0.5rem;
-}
-
-.registro-header h2 {
-  font-size: 1.8rem;
-  color: #8b5a2b;
-  margin-bottom: 0.5rem;
-  font-weight: 700;
-}
-
-.registro-header p {
-  color: #b5835a;
-  font-size: 0.9rem;
-}
-
-.input-group {
-  margin-bottom: 1.2rem;
-}
-
-.input-group label {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #4a2c1a;
-  margin-bottom: 0.4rem;
-}
-
-.input-group input {
-  width: 100%;
-  padding: 0.9rem 1rem;
-  border: 2px solid #e8d5c0;
+  padding: 40px;
   border-radius: 12px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  font-family: inherit;
-  background: #fefcf9;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-.input-group input:focus {
-  outline: none;
-  border-color: #d4a373;
-  box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.2);
+.login-card h2 {
+  margin-bottom: 20px;
 }
 
-.input-group input.error-input {
-  border-color: #ef4444;
-  background: #fef2f2;
-}
-
-.error-message {
-  display: block;
-  color: #ef4444;
-  font-size: 0.75rem;
-  margin-top: 0.3rem;
-}
-
-/* Medidor de fuerza de contraseña */
-.password-strength {
-  margin-top: 0.5rem;
-}
-
-.strength-bar-container {
-  height: 6px;
-  background: #e8d5c0;
-  border-radius: 3px;
-  overflow: hidden;
-  margin-bottom: 0.3rem;
-}
-
-.strength-bar {
-  height: 100%;
-  border-radius: 3px;
-  transition: width 0.3s ease;
-}
-
-.strength-text {
-  font-size: 0.7rem;
-  font-weight: 500;
-}
-
-/* CAPTCHA */
-.captcha-container {
-  margin: 1.5rem 0;
-  display: flex;
-  justify-content: center;
-}
-
-/* Botón de registro */
-.btn-registro {
+.login-card input {
   width: 100%;
-  background: linear-gradient(135deg, #d4a373 0%, #b5835a 100%);
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.login-card button {
+  width: 100%;
+  padding: 10px;
+  background: black;
   color: white;
   border: none;
-  padding: 1rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 50px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-family: inherit;
+  border-radius: 6px;
 }
 
-.btn-registro:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(139, 90, 43, 0.3);
+.login-card button:hover {
+  background: #333;
 }
 
-.btn-registro:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.loading-spinner {
-  display: inline-block;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Footer del registro */
-.registro-footer {
-  margin-top: 1.5rem;
-  text-align: center;
-}
-
-.registro-footer p {
-  margin: 0.5rem 0;
-  font-size: 0.85rem;
-  color: #64748b;
-}
-
-.link-login {
-  color: #d4a373;
+.login-card p {
+  margin-top: 15px;
   cursor: pointer;
-  text-decoration: none;
-  font-weight: 600;
-  margin-left: 0.3rem;
-  transition: color 0.3s ease;
-}
-
-.link-login:hover {
-  color: #8b5a2b;
-  text-decoration: underline;
-}
-
-.link-back {
-  cursor: pointer;
-  transition: color 0.3s ease;
-  display: inline-block;
-}
-
-.link-back:hover {
-  color: #8b5a2b;
-}
-
-/* Responsive */
-@media (max-width: 640px) {
-  .registro-container {
-    padding: 1rem;
-  }
-  
-  .registro-card {
-    padding: 1.5rem;
-  }
-  
-  .registro-header h2 {
-    font-size: 1.5rem;
-  }
-  
-  .input-group input {
-    padding: 0.7rem 0.9rem;
-  }
+  color: #555;
 }
