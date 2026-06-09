@@ -27,7 +27,6 @@ export const Usuarios = () => {
   const [cargando, setCargando] = useState(true);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // 🌟 NUEVO: Estado para saber si estamos creando (null) o editando (ID del usuario)
   const [editandoId, setEditandoId] = useState<number | null>(null);
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<UsuarioFormInputs>();
@@ -52,45 +51,43 @@ export const Usuarios = () => {
     }
   };
 
-  const onSubmit: SubmitHandler<UsuarioFormInputs> = async (data) => {
+  // 🌟 CORREGIDO: Usamos la interfaz correcta de Usuarios
+  const onSubmitForm: SubmitHandler<UsuarioFormInputs> = async (data) => {
     try {
-      // Si la contraseña está vacía al editar, la quitamos para no sobreescribirla en el backend
       const payload = { ...data };
-      if (editandoId && !payload.password) {
+
+      // EL TRUCO SALVAVIDAS: Si la contraseña está vacía, la borramos del paquete
+      if (!payload.password || payload.password.trim() === "") {
         delete payload.password;
       }
 
       if (editandoId) {
-        // MODO EDICIÓN
         await api.patch(`/usuarios/${editandoId}`, payload);
-        alert('Usuario actualizado con éxito');
+        alert("Usuario actualizado con éxito");
       } else {
-        // MODO CREACIÓN
-        await api.post('/usuarios', payload);
-        alert('Usuario creado con éxito');
+        await api.post("/usuarios", payload);
+        alert("Usuario creado exitosamente");
       }
-      
-      cerrarModal();
-      cargarUsuarios(); // Recargamos la tabla para ver los cambios
 
-    } catch (error: any) {
-      console.error('Error al guardar', error);
-      alert(error.response?.data?.message || 'Error al guardar el usuario');
+      // 🌟 CORREGIDO: Usamos las funciones que existen en este archivo
+      cerrarModal();
+      cargarUsuarios();
+
+    } catch (error) {
+      console.error("Error al guardar:", error);
+      alert("Hubo un error al guardar el usuario.");
     }
   };
 
-  // 🌟 NUEVO: Función para abrir el modal con los datos cargados
   const iniciarEdicion = (usuario: Usuario) => {
     setEditandoId(usuario.id);
     setValue('nombre', usuario.nombre);
     setValue('apellido', usuario.apellido);
     setValue('email', usuario.email);
     setValue('rol', usuario.rol);
-    // No seteamos la contraseña por seguridad, la dejamos en blanco
     setIsModalOpen(true);
   };
 
-  // 🌟 NUEVO: Función para eliminar físicamente de la base de datos
   const eliminarUsuario = async (id: number) => {
     if (!window.confirm("⚠️ ADVERTENCIA: ¿Estás seguro de ELIMINAR permanentemente este usuario? Si tiene pedidos registrados, esto podría causar errores en la base de datos. Se recomienda usar 'Desactivar'.")) {
       return;
@@ -100,7 +97,7 @@ export const Usuarios = () => {
       setUsuarios(usuarios.filter(u => u.id !== id));
       alert('Usuario eliminado permanentemente');
     } catch (error) {
-      alert('Error al eliminar. Es posible que este usuario tenga pedidos vinculados y MySQL bloquee el borrado por seguridad (Restricción de Clave Foránea).');
+      alert('Error al eliminar. Es posible que este usuario tenga pedidos vinculados y PostgreSQL bloquee el borrado por seguridad.');
     }
   };
 
@@ -129,7 +126,6 @@ export const Usuarios = () => {
   const colores = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#14532d'];
   const activos = usuarios.filter(u => u.estado).length;
 
-  // 🌟 MODIFICADO: La contraseña solo es obligatoria si estamos creando un usuario nuevo
   const passwordRegister = register('password', { 
     required: editandoId ? false : "Contraseña obligatoria", 
     minLength: { value: 6, message: "Mínimo 6 caracteres" } 
@@ -159,12 +155,12 @@ export const Usuarios = () => {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
           <div style={{ background: 'white', padding: '30px', borderRadius: '12px', width: '100%', maxWidth: '450px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
             
-            {/* El título cambia dinámicamente */}
             <h3 style={{ marginTop: 0, marginBottom: '20px', color: '#1e293b' }}>
               {editandoId ? '✏️ Editar Usuario' : 'Registrar Nuevo Usuario'}
             </h3>
 
-            <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            {/* 🌟 CORREGIDO: Apunta a onSubmitForm */}
+            <form onSubmit={handleSubmit(onSubmitForm)} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               
               <div style={{ display: 'flex', gap: '10px' }}>
                 <div style={{ flex: 1 }}>
@@ -253,10 +249,8 @@ export const Usuarios = () => {
                     </span>
                   </td>
                   
-                  {/* 🌟 AQUÍ ESTÁN LOS NUEVOS BOTONES DE ACCIÓN */}
                   <td style={{ padding: '12px', display: 'flex', gap: '8px', justifyContent: 'center' }}>
                     
-                    {/* Botón Editar */}
                     <button 
                       onClick={() => iniciarEdicion(u)}
                       style={{ background: '#f59e0b', color: 'white', padding: '6px 12px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
@@ -265,7 +259,6 @@ export const Usuarios = () => {
                       ✏️ Editar
                     </button>
 
-                    {/* Botón Activar/Desactivar (Borrado Lógico) */}
                     <button 
                       onClick={() => toggleEstado(u.id, u.estado)}
                       style={{ background: u.estado ? '#64748b' : '#10b981', color: 'white', padding: '6px 12px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
@@ -274,7 +267,6 @@ export const Usuarios = () => {
                       {u.estado ? '⛔ Suspender' : '✅ Activar'}
                     </button>
 
-                    {/* Botón Eliminar (Borrado Físico) */}
                     <button 
                       onClick={() => eliminarUsuario(u.id)}
                       style={{ background: '#ef4444', color: 'white', padding: '6px 12px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
