@@ -20,92 +20,54 @@ export const Layout = () => {
   };
 
   return (
-    <div className="app-container">
-      {/* 🔝 HEADER GLOBAL MEJORADO */}
+    <div>
+      {/* 🔝 HEADER GLOBAL */}
       <header className="header">
-        <div className="header-container">
-          {/* Logo con efecto hover */}
-          <div className="logo-area" onClick={() => navigate('/')}>
-            <span className="logo-icon">🍳</span>
-            <h1 className="logo-text">ESSEN</h1>
-            <span className="logo-badge">Premium</span>
-          </div>
+        {/* Un pequeño estilo para que parezca clickeable */}
+        <h1 onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>ESSEN</h1>
 
-          {/* Barra de navegación desktop */}
-          <nav className="nav-links">
-            {/* 🟢 1. RUTAS PÚBLICAS (Siempre visibles) */}
-            <button className="nav-btn" onClick={() => navigate('/productos')}>
-              <span className="btn-icon">🛒</span>
-              Productos
-            </button>
-            <button className="nav-btn" onClick={() => navigate('/acerca')}>
-              <span className="btn-icon">📖</span>
-              Acerca
-            </button>
+        <nav>
+          {/* 🟢 1. RUTAS PÚBLICAS (Siempre visibles) */}
+          <button onClick={() => navigate('/productos')}>Productos</button>
+          <button onClick={() => navigate('/acerca')}>Acerca</button>
 
-            {/* 🔵 2. RUTAS DE CLIENTE (Solo visibles si el usuario inició sesión) */}
-            {user && (
-              <button className="nav-btn cart-btn" onClick={() => navigate('/carrito')}>
-                <span className="btn-icon">🛍️</span>
-                Carrito
-                {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
+          {/* 🔵 2. RUTAS DE CLIENTE (Solo visibles si el usuario inició sesión) */}
+          {user && (
+            <>
+              <button onClick={() => navigate('/carrito')}>
+                Carrito ({totalItems})
               </button>
-            )}
+              {/* Actualizamos "Pacientes" a "Checkout" para mantener la lógica de tienda */}
+            </>
+          )}
 
-            {/* 🔴 3. RUTAS DE ADMINISTRADOR (Solo visibles si el rol es 'admin') */}
-            {user?.rol === 'admin' && (
-              <>
-                <button className="nav-btn admin-btn" onClick={() => navigate('/usuarios')}>
-                  <span className="btn-icon">👥</span>
-                  Usuarios
-                </button>
-                <button className="nav-btn admin-btn" onClick={() => navigate('/logs')}>
-                  <span className="btn-icon">📋</span>
-                  Logs
-                </button>
-                <button className="nav-btn admin-btn" onClick={() => navigate('/reportes')}>
-                  <span className="btn-icon">📊</span>
-                  Reportes
-                </button>
-                <button className="nav-btn admin-btn" onClick={() => navigate('/pedidos')}>
-                  <span className="btn-icon">📦</span>
-                  Pedidos
-                </button>
-              </>
-            )}
-          </nav>
+          {/* 🔴 3. RUTAS DE ADMINISTRADOR (Solo visibles si el rol es 'admin') */}
+          {user?.rol === 'admin' && (
+            <>
+              <button onClick={() => navigate('/usuarios')}>Usuarios</button>
+              <button onClick={() => navigate('/logs')}>Logs</button>
+              <button onClick={() => navigate('/reportes')}>Reportes</button>
+              <button onClick={() => navigate('/pedidos')}>Pedidos</button> 
+            </>
+          )}
 
           {/* 🔐 BOTONES DE SESIÓN (Dinámicos) */}
-          <div className="auth-area">
-            {!user ? (
-              <button className="btn-login" onClick={() => navigate('/login')}>
-                <span className="btn-icon">🔐</span>
-                Iniciar Sesión
-              </button>
-            ) : (
-              <div className="user-menu">
-                <span className="user-greeting">
-                  👋 Hola, <strong>{user.nombre}</strong>
-                </span>
-                <button onClick={handleLogout} className="btn-logout">
-                  <span className="btn-icon">🚪</span>
-                  Cerrar Sesión
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+          {!user ? (
+            <button onClick={() => navigate('/login')}>
+              Iniciar Sesión
+            </button>
+          ) : (
+            <button onClick={handleLogout} className="btn-logout">
+              Cerrar Sesión ({user.nombre})
+            </button>
+          )}
+        </nav>
       </header>
 
       {/* 📦 CONTENIDO DINÁMICO */}
-      <main className="main-content">
+      <main className="main">
         <Outlet />
       </main>
-
-      {/* Footer opcional para darle más estructura (puedes quitarlo si no lo deseas) */}
-      <footer className="footer">
-        <p>© 2026 ESSEN Premium Kitchen - Calidad que perdura</p>
-      </footer>
     </div>
   );
 };
