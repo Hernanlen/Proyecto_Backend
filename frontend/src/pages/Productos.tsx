@@ -53,7 +53,8 @@ const resolverImagen = (imagenUrl?: string | null) => {
 const normalizarProducto = (producto: BackendProducto): ProductoVista => ({
   ...producto,
   precio: Number(producto.precio),
-  img: resolverImagen(producto.imagenUrl),
+  // 🌟 Agregamos un salvavidas por si TypeORM manda la variable con guion bajo
+  img: resolverImagen(producto.imagenUrl || (producto as any).imagen_url), 
 });
 
 export const Productos = () => {
