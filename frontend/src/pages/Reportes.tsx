@@ -3,6 +3,10 @@ import api from "../services/api";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { 
+  AreaChart, // 🌟 Cambiado de BarChart
+  Area,      // 🌟 Cambiado de Bar
+} from 'recharts';
 import "./reportes.css";
 
 // Interfaces
@@ -144,22 +148,58 @@ export const Reportes = () => {
 
       {/* 📊 GRÁFICO ESTADÍSTICO */}
       <div style={{ background: "white", padding: "20px", borderRadius: "8px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", height: "400px" }}>
-        <h3 style={{ marginBottom: "20px", color: "#334155" }}>Productos Vendidos por Categoría</h3>
-        
-        <ResponsiveContainer width="100%" height="90%">
-          <BarChart data={datosGrafico} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="nombre" axisLine={false} tickLine={false} />
-            <YAxis axisLine={false} tickLine={false} />
-            <Tooltip 
-              cursor={{ fill: '#f1f5f9' }}
-              contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}
-            />
-            <Legend />
-            <Bar dataKey="cantidad" fill="#3b82f6" name="Unidades Vendidas" radius={[4, 4, 0, 0]} barSize={50} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+  <h3 style={{ marginBottom: "20px", color: "#334155" }}>Evolución de Productos Vendidos</h3>
+  
+  <ResponsiveContainer width="100%" height="90%">
+    <AreaChart data={datosGrafico} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+      
+      {/* 🎨 MAGIA VISUAL: Definimos un gradiente de color para el relleno */}
+      <defs>
+        <linearGradient id="colorVentas" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+        </linearGradient>
+      </defs>
+
+      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+      
+      <XAxis 
+        dataKey="nombre" 
+        axisLine={false} 
+        tickLine={false} 
+        tick={{ fill: '#64748b' }} 
+        dy={10} 
+      />
+      
+      <YAxis 
+        axisLine={false} 
+        tickLine={false} 
+        tick={{ fill: '#64748b' }} 
+        dx={-10} 
+      />
+      
+      <Tooltip 
+        contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}
+      />
+      
+      <Legend verticalAlign="top" height={36}/>
+      
+      {/* 📈 LA LÍNEA: type="monotone" hace curvas suaves. 
+          Si quieres picos triangulares afilados, cámbialo a type="linear" */}
+      <Area 
+        type="monotone" 
+        dataKey="cantidad" 
+        name="Unidades Vendidas" 
+        stroke="#2563eb" 
+        strokeWidth={3}
+        fillOpacity={1} 
+        fill="url(#colorVentas)" 
+        activeDot={{ r: 6, strokeWidth: 0, fill: '#1e40af' }} // Un punto resaltado al pasar el mouse
+      />
+      
+    </AreaChart>
+  </ResponsiveContainer>
+</div>
 
     </div>
   );

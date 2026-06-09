@@ -4,22 +4,36 @@ import { Repository } from 'typeorm';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { Producto } from './entities/producto.entity';
+import { Categoria } from '../categorias/entities/categoria.entity';
 
 @Injectable()
 export class ProductosService {
   constructor(
     @InjectRepository(Producto)
     private productoRepository: Repository<Producto>,
+    @InjectRepository(Categoria)
+    private categoriaRepository: Repository<Categoria>,
   ) {}
 
   // 1. CREAR PRODUCTO (Guarda en la BD)
   async create(createProductoDto: CreateProductoDto) {
+    let categoria: Categoria | undefined = undefined;
+
+    if (createProductoDto.categoriaId !== undefined && createProductoDto.categoriaId !== null) {
+      const categoriaEncontrada = await this.categoriaRepository.findOne({
+        where: { id: createProductoDto.categoriaId },
+      });
+
+      if (!categoriaEncontrada) {
+        throw new NotFoundException(`Categoría con ID ${createProductoDto.categoriaId} no encontrada`);
+      }
+
+      categoria = categoriaEncontrada;
+    }
+
     const nuevoProducto = this.productoRepository.create({
       ...createProductoDto,
-      categoria:
-        createProductoDto.categoriaId && createProductoDto.categoriaId > 0
-          ? ({ id: createProductoDto.categoriaId } as any)
-          : undefined,
+      categoria,
     });
 
     return await this.productoRepository.save(nuevoProducto);
@@ -50,10 +64,19 @@ export class ProductosService {
     const productoExistente = await this.findOne(id); // Verificamos que exista primero
 
     if (updateProductoDto.categoriaId !== undefined) {
-      productoExistente.categoria =
-        updateProductoDto.categoriaId && updateProductoDto.categoriaId > 0
-          ? ({ id: updateProductoDto.categoriaId } as any)
-          : undefined;
+      if (updateProductoDto.categoriaId !== null && updateProductoDto.categoriaId > 0) {
+        const categoria = await this.categoriaRepository.findOne({
+          where: { id: updateProductoDto.categoriaId },
+        });
+
+        if (!categoria) {
+          throw new NotFoundException(`Categoría con ID ${updateProductoDto.categoriaId} no encontrada`);
+        }
+
+        productoExistente.categoria = categoria;
+      } else {
+        productoExistente.categoria = undefined;
+      }
     }
 
     Object.assign(productoExistente, updateProductoDto);
